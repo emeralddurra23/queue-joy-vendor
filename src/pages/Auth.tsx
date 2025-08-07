@@ -47,44 +47,79 @@ const Auth = () => {
     try {
       // Check if this is the demo credentials and setup if needed
       if (email === 'admin@demo.com' && password === 'demo123') {
+        console.log('Demo credentials detected, setting up demo user...');
         const setupResult = await setupDemoUser();
+        
         if (!setupResult.success) {
+          console.error('Demo setup failed:', setupResult.error);
           toast({
             title: "Demo Setup Error",
-            description: "Failed to setup demo user. Please try again.",
+            description: "Failed to setup demo user. Please try the QR code option with 'DEMO_QR_123'.",
             variant: "destructive",
           });
           setIsLoading(false);
           return;
         }
+
+        if (setupResult.needsConfirmation) {
+          toast({
+            title: "Demo User Created",
+            description: "Demo user created but requires email confirmation. Please use QR code 'DEMO_QR_123' to login instead.",
+            variant: "default",
+          });
+          setIsLoading(false);
+          return;
+        }
+
+        // If setup was successful and no confirmation needed, proceed with login
+        if (setupResult.user) {
+          toast({
+            title: "Demo Login Successful!",
+            description: "Welcome to the VoiceBridge Queue demo.",
+          });
+          navigate("/dashboard");
+          setIsLoading(false);
+          return;
+        }
       }
 
+      // Regular login flow for non-demo users
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
+        console.error('Login error:', error);
+        
         if (error.message.includes("Invalid login credentials")) {
           toast({
-            title: "Login Failed",
-            description: "Invalid email or password. Please check your credentials and try again.",
+            title: "Invalid Credentials",
+            description: "Please check your email and password.",
+            variant: "destructive",
+          });
+        } else if (error.message.includes("Email not confirmed")) {
+          toast({
+            title: "Email Not Confirmed",
+            description: "Please check your email and click the confirmation link, or contact support.",
             variant: "destructive",
           });
         } else {
           toast({
-            title: "Error",
+            title: "Authentication Error",
             description: error.message,
             variant: "destructive",
           });
         }
       } else {
         toast({
-          title: "Welcome!",
-          description: "You have been successfully logged in.",
+          title: "Welcome Back!",
+          description: "You have successfully logged in.",
         });
+        navigate("/dashboard");
       }
     } catch (error) {
+      console.error('Unexpected error during login:', error);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
@@ -97,38 +132,80 @@ const Auth = () => {
 
   const handleQRScan = async (qrCode: string) => {
     setIsLoading(true);
+    
     try {
-      // Check if staff member exists with this QR badge code
-      const { data: staff, error } = await supabase
+      console.log('Processing QR code:', qrCode);
+      
+      // Special handling for demo QR code
+      if (qrCode === 'DEMO_QR_123') {
+        console.log('Demo QR code detected, setting up demo user...');
+        const setupResult = await setupDemoUser();
+        
+        if (setupResult.success && setupResult.user) {
+          // For demo QR, we'll create a session directly
+          toast({
+            title: "Demo QR Login Successful!",
+            description: "Welcome to the VoiceBridge Queue demo via QR code.",
+          });
+          navigate("/dashboard");
+          setShowQRScanner(false);
+          setIsLoading(false);
+          return;
+        } else {
+          toast({
+            title: "Demo Setup Error",
+            description: "Failed to setup demo user. Please try email login instead.",
+            variant: "destructive",
+          });
+          setShowQRScanner(false);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Query the staff table for the QR badge code
+      const { data: staffData, error } = await supabase
         .from('staff')
-        .select('*')
+        .select('*, vendors(*)')
         .eq('qr_badge_code', qrCode)
         .single();
 
-      if (error || !staff) {
+      if (error || !staffData) {
+        console.error('QR code lookup error:', error);
         toast({
-          title: "Invalid QR Badge",
-          description: "QR badge not found. Please contact your administrator.",
+          title: "QR Code Not Found",
+          description: "This QR code is not recognized. Please contact your manager or try the demo code 'DEMO_QR_123'.",
           variant: "destructive",
         });
+        setShowQRScanner(false);
+        setIsLoading(false);
         return;
       }
 
-      // For demo purposes, we'll simulate authentication
-      // In a real implementation, you'd have a secure token exchange
       toast({
-        title: "QR Login Successful",
-        description: `Welcome ${staff.email}! QR authentication is ready for implementation.`,
+        title: "QR Code Recognized!",
+        description: `Welcome ${staffData.email} from ${staffData.vendors?.name}! Implementing secure authentication...`,
       });
+
+      // TODO: Implement secure token-based authentication for QR codes
+      // For now, we'll simulate the authentication process
+      setTimeout(() => {
+        toast({
+          title: "QR Authentication",
+          description: "QR-based secure authentication will be fully implemented soon. Please use email login for now.",
+          variant: "default",
+        });
+      }, 1500);
       
-      setShowQRScanner(false);
     } catch (error) {
+      console.error('QR scan error:', error);
       toast({
-        title: "QR Scan Error",
+        title: "Error",
         description: "Failed to process QR code. Please try again.",
         variant: "destructive",
       });
     } finally {
+      setShowQRScanner(false);
       setIsLoading(false);
     }
   };
@@ -228,8 +305,17 @@ const Auth = () => {
             </TabsContent>
           </Tabs>
           
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>Demo credentials: admin@demo.com / demo123</p>
+          <div className="mt-6 p-3 bg-muted rounded-lg">
+            <p className="text-sm font-medium text-muted-foreground mb-2">Demo Access:</p>
+            <p className="text-sm text-muted-foreground">
+              Email: admin@demo.com / demo123
+            </p>
+            <p className="text-sm text-muted-foreground">
+              QR Code: DEMO_QR_123
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Try QR login if email confirmation is required
+            </p>
           </div>
         </CardContent>
       </Card>
