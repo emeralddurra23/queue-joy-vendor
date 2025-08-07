@@ -17,17 +17,21 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* VoiceBridge Queue Brand Colors */
+    --primary: 174 100% 29%; /* #2EC4B6 - Teal */
+    --primary-foreground: 0 0% 100%;
+    
+    --voicebridge-gold: 32 100% 55%; /* #FF9F1C - Gold */
+    --voicebridge-gold-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 32 100% 55%; /* Gold */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 174 20% 95%;
+    --muted-foreground: 174 20% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 174 60% 90%;
+    --accent-foreground: 174 100% 20%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -101,5 +105,6 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Roboto Mono', monospace;
   }
 }
