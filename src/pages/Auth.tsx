@@ -9,6 +9,7 @@ import { QrCode, Mail, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import QRCodeScanner from "@/components/QRCodeScanner";
+import { setupDemoUser } from "@/utils/setupDemoUser";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -44,6 +45,20 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
+      // Check if this is the demo credentials and setup if needed
+      if (email === 'admin@demo.com' && password === 'demo123') {
+        const setupResult = await setupDemoUser();
+        if (!setupResult.success) {
+          toast({
+            title: "Demo Setup Error",
+            description: "Failed to setup demo user. Please try again.",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
+        }
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
