@@ -14,7 +14,310 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      daily_stats: {
+        Row: {
+          abandonment_rate: number | null
+          avg_wait_minutes: number | null
+          created_at: string
+          date: string
+          id: string
+          peak_hour: number | null
+          revenue: number | null
+          total_customers: number | null
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          abandonment_rate?: number | null
+          avg_wait_minutes?: number | null
+          created_at?: string
+          date: string
+          id?: string
+          peak_hour?: number | null
+          revenue?: number | null
+          total_customers?: number | null
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          abandonment_rate?: number | null
+          avg_wait_minutes?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          peak_hour?: number | null
+          revenue?: number | null
+          total_customers?: number | null
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_stats_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      menu_items: {
+        Row: {
+          active: boolean | null
+          created_at: string
+          id: string
+          is_bestseller: boolean | null
+          is_special: boolean | null
+          name: string
+          prep_time_minutes: number | null
+          price: number | null
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string
+          id?: string
+          is_bestseller?: boolean | null
+          is_special?: boolean | null
+          name: string
+          prep_time_minutes?: number | null
+          price?: number | null
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string
+          id?: string
+          is_bestseller?: boolean | null
+          is_special?: boolean | null
+          name?: string
+          prep_time_minutes?: number | null
+          price?: number | null
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "menu_items_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          delivered: boolean | null
+          id: string
+          message: string
+          sent_at: string | null
+          ticket_id: string
+          type: Database["public"]["Enums"]["notification_type"]
+        }
+        Insert: {
+          created_at?: string
+          delivered?: boolean | null
+          id?: string
+          message: string
+          sent_at?: string | null
+          ticket_id: string
+          type: Database["public"]["Enums"]["notification_type"]
+        }
+        Update: {
+          created_at?: string
+          delivered?: boolean | null
+          id?: string
+          message?: string
+          sent_at?: string | null
+          ticket_id?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "queue_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          id: string
+          menu_item_id: string
+          quantity: number
+          special_instructions: string | null
+          ticket_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          menu_item_id: string
+          quantity?: number
+          special_instructions?: string | null
+          ticket_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          menu_item_id?: string
+          quantity?: number
+          special_instructions?: string | null
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_menu_item_id_fkey"
+            columns: ["menu_item_id"]
+            isOneToOne: false
+            referencedRelation: "menu_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "queue_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      queue_tickets: {
+        Row: {
+          abandoned_time: string | null
+          actual_wait_minutes: number | null
+          completed_time: string | null
+          created_at: string
+          customer_name: string | null
+          customer_phone: string | null
+          estimated_wait_minutes: number | null
+          id: string
+          order_start_time: string | null
+          prep_start_time: string | null
+          ready_time: string | null
+          status: Database["public"]["Enums"]["queue_status"]
+          ticket_code: string
+          ticket_number: number
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          abandoned_time?: string | null
+          actual_wait_minutes?: number | null
+          completed_time?: string | null
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          estimated_wait_minutes?: number | null
+          id?: string
+          order_start_time?: string | null
+          prep_start_time?: string | null
+          ready_time?: string | null
+          status?: Database["public"]["Enums"]["queue_status"]
+          ticket_code: string
+          ticket_number: number
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          abandoned_time?: string | null
+          actual_wait_minutes?: number | null
+          completed_time?: string | null
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          estimated_wait_minutes?: number | null
+          id?: string
+          order_start_time?: string | null
+          prep_start_time?: string | null
+          ready_time?: string | null
+          status?: Database["public"]["Enums"]["queue_status"]
+          ticket_code?: string
+          ticket_number?: number
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "queue_tickets_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          qr_badge_code: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+          user_id: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          qr_badge_code?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          qr_badge_code?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendors: {
+        Row: {
+          api_endpoint: string | null
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          api_endpoint?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          api_endpoint?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +326,15 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      notification_type: "in_app" | "sms" | "whatsapp"
+      queue_status:
+        | "waiting"
+        | "ordering"
+        | "preparing"
+        | "ready"
+        | "completed"
+        | "abandoned"
+      user_role: "owner" | "staff"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +461,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      notification_type: ["in_app", "sms", "whatsapp"],
+      queue_status: [
+        "waiting",
+        "ordering",
+        "preparing",
+        "ready",
+        "completed",
+        "abandoned",
+      ],
+      user_role: ["owner", "staff"],
+    },
   },
 } as const
