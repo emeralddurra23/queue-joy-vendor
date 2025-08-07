@@ -18,9 +18,6 @@ export default {
 			}
 		},
 		extend: {
-			fontFamily: {
-				'roboto-mono': ['Roboto Mono', 'monospace'],
-			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -34,10 +31,6 @@ export default {
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))'
-				},
-				'voicebridge-gold': {
-					DEFAULT: 'hsl(var(--voicebridge-gold))',
-					foreground: 'hsl(var(--voicebridge-gold-foreground))'
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
